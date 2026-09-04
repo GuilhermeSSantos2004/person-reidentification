@@ -71,8 +71,9 @@ distintas. Os pesos podem ser alterados em `Candidato.combinada`.
 
 ## Escolha automatica da configuracao
 
-Para cada video sao testados os tres metodos e onze limiares, de `0,25` ate
-`0,75`. Isso produz 33 configuracoes por video e 66 no total. A qualidade leva
+Para cada video sao testados os tres metodos, quatro confiancas minimas do YOLO
+(`0,15`, `0,25`, `0,35` e `0,45`) e onze limiares, de `0,25` ate `0,75`.
+Isso produz 132 configuracoes por video e 264 no total. A qualidade leva
 em conta:
 
 - cobertura: proporcao de quadros nos quais a pessoa foi aceita;
@@ -139,8 +140,8 @@ python testar_yolo_video_tracker_uma_pessoa.py
 Exemplo de mensagem apresentada ao final:
 
 ```text
-video1.mp4: cor, limiar=0.25, cobertura=98.5%
-video2.mp4: cor, limiar=0.25, cobertura=100.0%
+video1.mp4: cor, conf=0.25, limiar=0.25, cobertura=98.5%
+video2.mp4: cor, conf=0.25, limiar=0.25, cobertura=100.0%
 ```
 
 Nos videos gerados, o rotulo possui este formato:
@@ -171,10 +172,10 @@ caso ainda nao esteja presente.
 
 ## Resultado obtido
 
-| Video | Metodo selecionado | Limiar | Cobertura |
-| --- | --- | ---: | ---: |
-| video1.mp4 | Cor HSV162 | 0,25 | 98,5% |
-| video2.mp4 | Cor HSV162 | 0,25 | 100,0% |
+| Video | Metodo selecionado | Confianca YOLO | Limiar | Cobertura |
+| --- | --- | ---: | ---: | ---: |
+| video1.mp4 | Cor HSV162 | 0,15 | 0,25 | 98,5% |
+| video2.mp4 | Cor HSV162 | 0,45 | 0,25 | 100,0% |
 
 Nos sete quadros iniciais do primeiro video, a pessoa de interesse ainda nao
 esta visivel. Os dois videos finais foram validados quadro a quadro e codificados
@@ -236,7 +237,8 @@ repositorio excessivamente pesado. Antes de executar, coloque na raiz:
 
 | Parametro | Padrao | Funcao |
 | --- | ---: | --- |
-| `--confianca` | `0.25` | Confianca minima das deteccoes do YOLO |
+| `--confianca` | `0.10` | Piso para detectar candidatos durante a busca |
+| Confiancas avaliadas | `0.15`, `0.25`, `0.35`, `0.45` | Busca a melhor confianca YOLO |
 | `classes=[0]` | pessoa | Impede o processamento de outras classes COCO |
 | Limiar testado | `0.25` a `0.75` | Decide se a pessoa candidata sera marcada |
 | Peso da cor | `60%` | Participacao do HSV na medida combinada |
@@ -276,6 +278,14 @@ compativel com PyTorch/CUDA estiver configurada, o Ultralytics podera utiliza-la
 - Suavizacao temporal e associacao por ID poderiam reduzir trocas em cenas mais
   longas ou lotadas.
 
-## Autor
+## Integrantes
 
-Guilherme Santos
+- Enricco Rossi de Souza Carvalho Miranda - RM551717
+- Gabriel Marquez Trevisan - RM99227
+- Guilherme Silva dos Santos - RM551168
+- Danilo Urze Aldred - RM99465
+- Laura Claro Mathias - RM98747
+
+O enunciado permite realizacao individual ou em grupos de ate cinco alunos.
+Este grupo possui exatamente cinco integrantes. Apenas um integrante deve
+realizar a entrega final pelo Teams.

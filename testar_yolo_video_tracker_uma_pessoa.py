@@ -63,10 +63,11 @@ def valor(c: Candidato, metodo: str) -> float:
     return c.cor if metodo == "cor" else c.orientacao if metodo == "orientacao" else c.combinada
 
 
-def avaliar(quadros, metodo: str, limiar: float) -> dict:
+def avaliar(quadros, metodo: str, limiar: float, confianca_minima: float) -> dict:
     aceitos, detectados, margens, saltos = 0, 0, [], []
     centro_anterior = None
-    for _, candidatos in quadros:
+    for _, candidatos_frame in quadros:
+        candidatos = [c for c in candidatos_frame if c.confianca >= confianca_minima]
         if not candidatos:
             continue
         detectados += 1
@@ -86,7 +87,8 @@ def avaliar(quadros, metodo: str, limiar: float) -> dict:
     margem = float(np.mean(margens)) if margens else 0.0
     salto = float(np.median(saltos)) if saltos else 999.0
     qualidade = cobertura + 0.8 * margem - 0.00025 * salto
-    return {"metodo": metodo, "limiar": limiar, "aceitos": aceitos,
+    return {"metodo": metodo, "confianca_minima": confianca_minima,
+            "limiar": limiar, "aceitos": aceitos,
             "frames": len(quadros), "detectados": detectados,
             "cobertura": cobertura, "margem_media": margem,
             "salto_mediano": salto, "qualidade": qualidade}
@@ -94,9 +96,12 @@ def avaliar(quadros, metodo: str, limiar: float) -> dict:
 
 def escolher_configuracao(quadros):
     resultados = []
-    for metodo in ("cor", "orientacao", "combinada"):
-        for limiar in np.arange(0.25, 0.76, 0.05):
-            resultados.append(avaliar(quadros, metodo, round(float(limiar), 2)))
+    for confianca in (0.15, 0.25, 0.35, 0.45):
+        for metodo in ("cor", "orientacao", "combinada"):
+            for limiar in np.arange(0.25, 0.76, 0.05):
+                resultados.append(avaliar(
+                    quadros, metodo, round(float(limiar), 2), confianca
+                ))
     viaveis = [r for r in resultados if r["cobertura"] >= 0.35]
     return max(viaveis or resultados, key=lambda r: r["qualidade"]), resultados
 
@@ -109,6 +114,10 @@ def gravar(video_entrada: Path, saida: Path, quadros, config: dict):
     writer = cv2.VideoWriter(str(saida), cv2.VideoWriter_fourcc(*"mp4v"), fps, (w, h))
     for frame, candidatos in quadros:
         exibicao = frame.copy()
+        candidatos = [
+            c for c in candidatos
+            if c.confianca >= config["confianca_minima"]
+        ]
         if candidatos:
             melhor = max(candidatos, key=lambda c: valor(c, config["metodo"]))
             score = valor(melhor, config["metodo"])
@@ -141,7 +150,8 @@ def processar(base: Path, saida: Path, conf: float):
         melhor = {"video": video.name, "saida": destino.name, **melhor}
         resumo.append(melhor)
         todos.extend({"video": video.name, **r} for r in resultados)
-        print(f"{video.name}: {melhor['metodo']}, limiar={melhor['limiar']:.2f}, "
+        print(f"{video.name}: {melhor['metodo']}, conf={melhor['confianca_minima']:.2f}, "
+              f"limiar={melhor['limiar']:.2f}, "
               f"cobertura={melhor['cobertura']:.1%}")
     with open(saida / "resultados_testes.csv", "w", newline="", encoding="utf-8") as arq:
         escritor = csv.DictWriter(arq, fieldnames=list(todos[0].keys()))
@@ -153,7 +163,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", type=Path, default=Path(__file__).resolve().parent)
     parser.add_argument("--saida", type=Path, default=Path(__file__).resolve().parent / "entrega")
-    parser.add_argument("--confianca", type=float, default=0.25)
+    parser.add_argument("--confianca", type=float, default=0.10,
+                        help="Piso de deteccao usado na busca de confianca (padrao: 0.10)")
     args = parser.parse_args()
     processar(args.base, args.saida, args.confianca)
 
