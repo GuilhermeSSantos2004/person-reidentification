@@ -165,8 +165,9 @@ Para informar outra pasta de entrada e outra pasta de saida:
 python testar_yolo_video_tracker_uma_pessoa.py --base ./dados --saida ./resultado
 ```
 
-A pasta de entrada deve conter `video1.mp4`, `video2.mp4`, as duas imagens de
-referencia e o arquivo `yolo11n.pt`.
+A pasta de entrada deve conter `video1.mp4`, `video2.mp4` e as duas imagens de
+referencia. O peso `yolo11n.pt` e baixado automaticamente na primeira execucao
+caso ainda nao esteja presente.
 
 ## Resultado obtido
 
@@ -211,6 +212,25 @@ python -m unittest discover -s tests -v
 
 Os testes verificam imagens identicas, imagens diferentes, limites entre 0 e 1
 e validacao de entradas invalidas.
+
+## Gerar novamente o relatorio
+
+Depois de executar a analise, use:
+
+```bash
+python gerar_relatorio.py
+```
+
+O arquivo `entrega/Relatorio_CP4.pdf` sera criado em formato A4.
+
+## Arquivos de entrada
+
+Os videos e pesos do modelo nao ficam versionados no GitHub para evitar um
+repositorio excessivamente pesado. Antes de executar, coloque na raiz:
+
+- `video1.mp4` e `video2.mp4` fornecidos na atividade;
+- `pessoa-foco_video1.png` e `pessoa-foco_video2.png`;
+- opcionalmente, `yolo11n.pt` (baixado automaticamente se estiver ausente).
 
 ## Principais parametros
 
