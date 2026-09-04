@@ -5,6 +5,14 @@ capturados por cameras e perspectivas diferentes. O YOLO11 detecta as pessoas
 e cada recorte e comparado com uma imagem de referencia usando cor HSV,
 orientacao dos gradientes e a combinacao dessas caracteristicas.
 
+## Integrantes
+
+- Enricco Rossi de Souza Carvalho Miranda - RM551717
+- Gabriel Marquez Trevisan - RM99227
+- Guilherme Silva dos Santos - RM551168
+- Danilo Urze Aldred - RM99465
+- Laura Claro Mathias - RM98747
+
 ## Objetivo
 
 Receber uma imagem contendo a pessoa de interesse e localizar essa mesma
@@ -278,13 +286,6 @@ compativel com PyTorch/CUDA estiver configurada, o Ultralytics podera utiliza-la
 - Suavizacao temporal e associacao por ID poderiam reduzir trocas em cenas mais
   longas ou lotadas.
 
-## Integrantes
-
-- Enricco Rossi de Souza Carvalho Miranda - RM551717
-- Gabriel Marquez Trevisan - RM99227
-- Guilherme Silva dos Santos - RM551168
-- Danilo Urze Aldred - RM99465
-- Laura Claro Mathias - RM98747
 
 O enunciado permite realizacao individual ou em grupos de ate cinco alunos.
 Este grupo possui exatamente cinco integrantes. Apenas um integrante deve
